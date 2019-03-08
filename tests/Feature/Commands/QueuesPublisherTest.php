@@ -10,6 +10,11 @@ class QueuesPublisherTest extends TestCase
     /** @test */
     public function can_publish_queues()
     {
+        config([
+            'queueNameForAccessor' => 'test',
+            'anotherQueueNameForAccessor' => 'test-2'
+        ]);
+
         File::delete(base_path('tools/docker/etc/confd/templates/env/dotenv.tmpl'));
         File::delete(base_path('tools/docker/usr/local/share/env/999-queues-env'));
         File::delete(base_path('workers-production.yml'));
