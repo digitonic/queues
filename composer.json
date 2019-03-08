@@ -1,0 +1,25 @@
+{
+    "name": "digitonic/queues",
+    "description": "Simple queue management system",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "MrTammer",
+            "email": "juanick@hotmail.fr"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Digitonic\\Queues\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Digitonic\\Queues\\Tests\\": "tests"
+        }
+    },
+    "minimum-stability": "stable",
+    "require": {
+        "symfony/yaml": "^4.2"
+    }
+}

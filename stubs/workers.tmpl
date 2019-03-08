@@ -1,0 +1,12 @@
+{{ if ( eq "true" ( getenv "START_QUEUE" )) }}
+[program:worker]
+process_name=worker_%(process_num)s
+command=php /app/artisan doctrine:queue:work --queue={{ getenv "QUEUE_NAME" }} --tries=1 --timeout=600 --daemon
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
+autostart = {{ getenv "START_QUEUE" }}
+autorestart = true
+numprocs= {{ getenv "QUEUE_NUM_PROCS" }}
+{{ end }}

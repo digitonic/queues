@@ -1,0 +1,30 @@
+workers_production:
+  deploy:
+    services:
+      worker-default:
+        specification:
+          accessibility:
+            from_external: false
+
+          scalability:
+            number_of_replicas: ${WORKER_DEFAULT_REPLICAS}
+
+          source:
+            from_service: web
+
+          ports:
+            - 80
+
+          environment_variables:
+            START_MODE: cron
+            RUN_LARAVEL_CRON: "false"
+            START_QUEUE: "true"
+            QUEUE_NUM_PROCS: "1"
+
+          resources:
+            requests:
+              cpu: <placeholder>
+              memory: <placeholder>
+
+  filter:
+    expression: 'code_reference.branch in ["production"] or "Build on CP" in pull_request.labels'
