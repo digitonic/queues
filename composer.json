@@ -20,6 +20,6 @@
     },
     "minimum-stability": "stable",
     "require": {
-        "symfony/yaml": "^4.2"
+        "symfony/yaml": "^4.1"
     }
 }
