@@ -66,7 +66,7 @@ class QueuesPublisher extends Command
 
         foreach (config('digitonic.queues') as $queueName => $queueValue) {
             $envName = 'QUEUE_NAME_' . strtoupper(snake_case($queueName));
-            $queuesEnv .= 'export ' . $envName . '=${' . $envName . ':-' . $queueValue . '}';
+            $queuesEnv .= 'export ' . $envName . '=${' . $envName . ':-' . strtolower(kebab_case(config('app.name'))) . '}';
             $queuesEnv .= "\n";
 
             $queuesDotEnv .= $envName . '="{{ getenv "' . $envName . '" }}";';

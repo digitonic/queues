@@ -33,7 +33,7 @@ class QueuesPublisherTest extends TestCase
 
         $this->assertTrue(File::exists(base_path('tools/docker/usr/local/share/env/999-queues-env')));
         $this->assertEquals(
-            "export QUEUE_NAME_QUEUE_NAME_FOR_ACCESSOR=\${QUEUE_NAME_QUEUE_NAME_FOR_ACCESSOR:-test}\nexport QUEUE_NAME_ANOTHER_QUEUE_NAME_FOR_ACCESSOR=\${QUEUE_NAME_ANOTHER_QUEUE_NAME_FOR_ACCESSOR:-test-2}\n",
+            "export QUEUE_NAME_QUEUE_NAME_FOR_ACCESSOR=\${QUEUE_NAME_QUEUE_NAME_FOR_ACCESSOR:-laravel-default}\nexport QUEUE_NAME_ANOTHER_QUEUE_NAME_FOR_ACCESSOR=\${QUEUE_NAME_ANOTHER_QUEUE_NAME_FOR_ACCESSOR:-laravel-default}\n",
             File::get(base_path('tools/docker/usr/local/share/env/999-queues-env'))
         );
 
