@@ -119,7 +119,7 @@ class QueuesPublisher extends Command
             str_replace('queue-name', 'worker', kebab_case($queueName)) => [
                 'specification' => [
                     'accessibility' => ['from_external' => false],
-                    'scalability' => ['number_of_replicas' => '${WORKER_DEFAULT_REPLICAS}'],
+                    'scalability' => ['number_of_replicas' => '${WORKER_'.strtoupper(snake_case($queueName)).'_REPLICAS}'],
                     'source' => ['from_service' => 'web'],
                     'ports' => [80],
                     'environment_variables' => [
