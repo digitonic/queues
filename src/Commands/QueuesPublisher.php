@@ -4,6 +4,7 @@ namespace Digitonic\Queues\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use Symfony\Component\Yaml\Yaml;
 
 class QueuesPublisher extends Command
@@ -26,17 +27,20 @@ class QueuesPublisher extends Command
     {
         $queuesDotEnv = "\n";
         $queuesEnv = '';
+        $defaultQueueName = strtolower(Str::kebab(config('app.name'))) . '-default';
 
         if (File::exists(base_path('docker-compose.yml'))) {
             $dockerCompose = Yaml::parse(File::get(base_path('docker-compose.yml')));
+            $dockerCompose['services']['web']['environment'] = array_merge($dockerCompose['services']['web']['environment'], [
+                'QUEUE_NAME' => $defaultQueueName,
+                'QUEUE_NUM_PROCS' => 1,
+                'START_QUEUE' => "true"
+            ]);
         }
 
         if (File::exists(base_path('continuous-pipe.yml'))) {
-            $continuousPipe = Yaml::parse(File::get(base_path('continuous-pipe.yml')));
-
             $stagingStub = Yaml::parse(File::get(__DIR__ . '/../../stubs/worker_staging.yml'));
             $productionStub = Yaml::parse(File::get(__DIR__ . '/../../stubs/worker_production.yml'));
-            $defaultQueueName = strtolower(config('app.name')) . '-default';
 
             $stagingStub['workers_staging']['deploy']['services']['worker-default']['specification']['environment_variables']['QUEUE_NAME']
                 = $defaultQueueName;
@@ -65,8 +69,8 @@ class QueuesPublisher extends Command
 
 
         foreach (config('digitonic.queues') as $queueName => $queueValue) {
-            $envName = 'QUEUE_NAME_' . strtoupper(snake_case($queueName));
-            $queuesEnv .= 'export ' . $envName . '=${' . $envName . ':-' . strtolower(kebab_case(config('app.name'))) . '-default}';
+            $envName = 'QUEUE_NAME_' . strtoupper(Str::snake($queueName));
+            $queuesEnv .= 'export ' . $envName . '=${' . $envName . ':-' . $defaultQueueName . '}';
             $queuesEnv .= "\n";
 
             $queuesDotEnv .= $envName . '="{{ getenv "' . $envName . '" }}";';
@@ -100,26 +104,13 @@ class QueuesPublisher extends Command
         }
     }
 
-    /**
-     * @param $continuousPipe
-     * @return array
-     */
-    protected function getWebEnvVariables($continuousPipe)
-    {
-        $webEnvVariables = [];
-        collect($continuousPipe['tasks']['initialization']['run']['environment_variables'])->each(function ($item) use (&$webEnvVariables) {
-            $webEnvVariables[$item['name']] = $item['value'];
-        });
-        return $webEnvVariables;
-    }
-
     protected function getWorkerYamlConfig($queueName, $queueValue)
     {
         return [
-            'worker-'. kebab_case($queueName) => [
+            'worker-' . Str::kebab($queueName) => [
                 'specification' => [
                     'accessibility' => ['from_external' => false],
-                    'scalability' => ['number_of_replicas' => '${WORKER_'.strtoupper(snake_case($queueName)).'_REPLICAS}'],
+                    'scalability' => ['number_of_replicas' => '${WORKER_' . strtoupper(Str::snake($queueName)) . '_REPLICAS}'],
                     'source' => ['from_service' => 'web'],
                     'ports' => [80],
                     'environment_variables' => [
