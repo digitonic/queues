@@ -116,7 +116,7 @@ class QueuesPublisher extends Command
     protected function getWorkerYamlConfig($queueName, $queueValue)
     {
         return [
-            str_replace('queue-name', 'worker', kebab_case($queueName)) => [
+            'worker-'. kebab_case($queueName) => [
                 'specification' => [
                     'accessibility' => ['from_external' => false],
                     'scalability' => ['number_of_replicas' => '${WORKER_'.strtoupper(snake_case($queueName)).'_REPLICAS}'],
