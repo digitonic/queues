@@ -11,8 +11,8 @@ class QueuesPublisherTest extends TestCase
     public function can_publish_queues()
     {
         config([
-            'queueNameForAccessor' => 'test',
-            'anotherQueueNameForAccessor' => 'test-2'
+            'digitonic.queues.queueNameForAccessor' => 'test',
+            'digitonic.queues.anotherQueueNameForAccessor' => 'test-2'
         ]);
 
         File::delete(base_path('tools/docker/etc/confd/templates/env/dotenv.tmpl'));
