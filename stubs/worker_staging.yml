@@ -16,6 +16,7 @@ workers_staging:
             - 80
 
           environment_variables:
+            /<</: '*WEB_ENV_VARS <this comment and the quotation marks should be removed>'
             START_MODE: cron
             RUN_LARAVEL_CRON: "false"
             START_QUEUE: "true"

@@ -40,24 +40,9 @@ class QueuesPublisher extends Command
 
             $stagingStub['workers_staging']['deploy']['services']['worker-default']['specification']['environment_variables']['QUEUE_NAME']
                 = $defaultQueueName;
-            $stagingStub['workers_staging']['deploy']['services']['worker-default']['specification']['environment_variables'] = array_merge(
-                $stagingStub['workers_staging']['deploy']['services']['worker-default']['specification']['environment_variables'],
-                $this->getWebEnvVariables($continuousPipe)
-            );
 
             $productionStub['workers_production']['deploy']['services']['worker-default']['specification']['environment_variables']['QUEUE_NAME']
                 = $defaultQueueName;
-            $productionStub['workers_production']['deploy']['services']['worker-default']['specification']['environment_variables'] = array_merge(
-                $productionStub['workers_production']['deploy']['services']['worker-default']['specification']['environment_variables'],
-                $this->getWebEnvVariables($continuousPipe)
-            );
-
-            foreach ($continuousPipe['pipelines'] as $key => $value) {
-                $continuousPipe['pipelines'][$key]['tasks'][]
-                    = $continuousPipe['pipelines'][$key]['name'] == 'Production' ? 'workers_production' : 'workers_staging';
-            }
-
-            $continuousPipe['tasks']['workers_staging'] = $stagingStub['workers_staging'];
         }
 
         if (!File::isDirectory(base_path('tools/docker/etc/confd/templates/env/'))) {
@@ -80,7 +65,7 @@ class QueuesPublisher extends Command
 
 
         foreach (config('digitonic.queues') as $queueName => $queueValue) {
-            $envName = strtoupper(snake_case($queueName));
+            $envName = 'QUEUE_NAME_' . strtoupper(snake_case($queueName));
             $queuesEnv .= 'export ' . $envName . '=${' . $envName . ':-' . $queueValue . '}';
             $queuesEnv .= "\n";
 
@@ -91,10 +76,10 @@ class QueuesPublisher extends Command
                 $dockerCompose['services']['web']['environment'][$envName] = '${' . $envName . '}';
             }
 
-            if (isset($continuousPipe)) {
+            if (File::exists(base_path('continuous-pipe.yml'))) {
                 $productionStub['workers_production']['deploy']['services'] = array_merge(
                     $productionStub['workers_production']['deploy']['services'],
-                    $this->getWorkerYamlConfig($queueName, $queueValue, $this->getWebEnvVariables($continuousPipe))
+                    $this->getWorkerYamlConfig($queueName, $queueValue)
                 );
             }
         }
@@ -107,7 +92,7 @@ class QueuesPublisher extends Command
             File::put(base_path('docker-compose.yml'), Yaml::dump($dockerCompose, 10, 2));
         }
 
-        if (isset($continuousPipe)) {
+        if (File::exists(base_path('continuous-pipe.yml'))) {
             File::put(base_path('workers-staging.yml'), Yaml::dump($stagingStub, 10, 2));
             File::put(base_path('workers-production.yml'), Yaml::dump($productionStub, 10, 2));
             $this->info('Workers .yml files were created at the root of your project');
@@ -128,7 +113,7 @@ class QueuesPublisher extends Command
         return $webEnvVariables;
     }
 
-    protected function getWorkerYamlConfig($queueName, $queueValue, $webEnvVariables)
+    protected function getWorkerYamlConfig($queueName, $queueValue)
     {
         return [
             str_replace('queue-name', 'worker', kebab_case($queueName)) => [
@@ -137,16 +122,14 @@ class QueuesPublisher extends Command
                     'scalability' => ['number_of_replicas' => '${WORKER_DEFAULT_REPLICAS}'],
                     'source' => ['from_service' => 'web'],
                     'ports' => [80],
-                    'environment_variables' => array_merge(
-                        [
-                            'START_MODE' => 'cron',
-                            'RUN_LARAVEL_CRON' => false,
-                            'START_QUEUE' => true,
-                            'QUEUE_NUM_PROCS' => '1',
-                            'QUEUE_NAME' => $queueValue
-                        ],
-                        $webEnvVariables
-                    ),
+                    'environment_variables' => [
+                        '<<' => '*WEB_ENV_VARS <this comment and the quotation marks should be removed>',
+                        'START_MODE' => 'cron',
+                        'RUN_LARAVEL_CRON' => false,
+                        'START_QUEUE' => true,
+                        'QUEUE_NUM_PROCS' => '1',
+                        'QUEUE_NAME' => $queueValue
+                    ],
                     'resources' => [
                         'requests' => [
                             'cpu' => '<placeholder>',
