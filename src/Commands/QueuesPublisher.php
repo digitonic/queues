@@ -36,6 +36,7 @@ class QueuesPublisher extends Command
                 'QUEUE_NUM_PROCS' => 1,
                 'START_QUEUE' => "true"
             ]);
+            File::put(base_path('docker-compose.yml'), Yaml::dump($dockerCompose, 10, 2));
         }
 
         if (File::exists(base_path('continuous-pipe.yml'))) {
@@ -76,10 +77,6 @@ class QueuesPublisher extends Command
             $queuesDotEnv .= $envName . '="{{ getenv "' . $envName . '" }}";';
             $queuesDotEnv .= "\n";
 
-            if (isset($dockerCompose)) {
-                $dockerCompose['services']['web']['environment'][$envName] = '${' . $envName . '}';
-            }
-
             if (File::exists(base_path('continuous-pipe.yml'))) {
                 $productionStub['workers_production']['deploy']['services'] = array_merge(
                     $productionStub['workers_production']['deploy']['services'],
@@ -91,10 +88,6 @@ class QueuesPublisher extends Command
         File::append(base_path('tools/docker/etc/confd/templates/env/dotenv.tmpl'), $queuesDotEnv);
 
         File::append(base_path('tools/docker/usr/local/share/env/999-queues-env'), $queuesEnv);
-
-        if (isset($dockerCompose)) {
-            File::put(base_path('docker-compose.yml'), Yaml::dump($dockerCompose, 10, 2));
-        }
 
         if (File::exists(base_path('continuous-pipe.yml'))) {
             File::put(base_path('workers-staging.yml'), Yaml::dump($stagingStub, 10, 2));
