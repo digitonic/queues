@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Queues\Commands;
+namespace Digitonic\Queues\Tests\Feature\Queues\Commands;
 
 use Illuminate\Support\Facades\File;
 use Tests\TestCase;

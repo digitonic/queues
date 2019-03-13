@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Queues;
+namespace Digitonic\Queues\Tests\Unit\Queues;
 
 use Digitonic\Queues\Queue;
 use Tests\TestCase;
