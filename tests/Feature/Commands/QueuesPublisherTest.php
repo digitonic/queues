@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Queues\Commands;
+namespace Digitonic\Queues\Tests\Feature\Queues\Commands;
 
 use Illuminate\Support\Facades\File;
 use Tests\TestCase;
@@ -10,6 +10,7 @@ class QueuesPublisherTest extends TestCase
     /** @test */
     public function can_publish_queues()
     {
+        // todo test in more details the effect of files modification
         config([
             'digitonic.queues.queueNameForAccessor' => 'test',
             'digitonic.queues.anotherQueueNameForAccessor' => 'test-2'
