@@ -1,0 +1,13 @@
+{{ if ( eq "true" ( getenv "START_QUEUE" )) }}
+[eventlistener:slack]
+command=python3 /app/notifier.py %(ENV_HOSTNAME)s %(ENV_APP_ENV)s %(ENV_SLACK_WEBHOOK)s %(ENV_SLACK_HOSTNAME)s %(ENV_APP_NAME)s
+process_name=%(program_name)s_%(process_num)02d
+events=PROCESS_STATE_STOPPING
+numprocs=1
+autostart=true
+autorestart=true
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
+{{ end }}
