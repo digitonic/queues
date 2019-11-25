@@ -1,8 +1,7 @@
 # Digitonic Queues
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/digitonic/queues.svg?style=flat-square)](https://packagist.org/packages/digitonic/queues)
-[![Build Status](https://img.shields.io/travis/digitonic/queues/master.svg?style=flat-square)](https://travis-ci.org/digitonic/queues)
-[![Quality Score](https://img.shields.io/scrutinizer/g/digitonic/queues.svg?style=flat-square)](https://scrutinizer-ci.com/g/digitonic/queues)
+[![Build Status](https://travis-ci.com/digitonic/queues.svg?branch=master)](https://travis-ci.com/digitonic/queues)
 [![Total Downloads](https://img.shields.io/packagist/dt/digitonic/queues.svg?style=flat-square)](https://packagist.org/packages/digitonic/queues)
 
 This package will add a centralized queue class which can be altered via environment variables.
