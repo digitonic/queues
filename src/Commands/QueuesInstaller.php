@@ -2,7 +2,7 @@
 
 namespace Digitonic\Queues\Commands;
 
-use Digitonic\Queues\QueueServiceProvider;
+use Digitonic\Queues\QueuesServiceProvider;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 
