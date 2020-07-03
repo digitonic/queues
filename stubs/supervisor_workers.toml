@@ -1,0 +1,8 @@
+[template]
+src   = "supervisor/workers.tmpl"
+dest  = "/etc/supervisor/conf.d/workers.conf"
+mode  = "0640"
+gid = 33
+uid = 999
+keys = [
+]
