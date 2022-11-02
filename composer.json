@@ -21,7 +21,7 @@
     ],
     "require": {
         "php": "^8.0|^8.1",
-        "illuminate/support": "5.8.*|6.*|7.*|8.*",
+        "illuminate/support": "5.8.*|6.*|7.*|8.*|9.*|10.*",
         "symfony/yaml": "^5.2"
     },
     "require-dev": {
